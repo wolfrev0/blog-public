@@ -1,0 +1,6 @@
+.gcloudignore
+__pycache__/
+/setup.cfg
+env/
+run
+/mypy

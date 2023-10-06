@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="paragraph">
+	<p>제 블로그에 오신걸 환영합니다.</p>
+	<p>주로 알고리즘PS에 대한 내용 + 관심분야(game engine, web backend, program optimization, AI) 찍먹한 내용을 정리하...려고 합니다만,</p>
+	<p>거의 개인 메모장으로 사용하고 있어서 정리되지 않은 글이 상당히 있습니다.</p>
+	<p style="display: inline-block;">오른쪽 상단의 </p><img src="/static/side_menu.png" style="display: inline-block;"/><p style="display: inline-block;">버튼으로 게시글 트리를 보실 수 있으며, 각 노드의 화살표버튼으로 접기/펴기가 가능합니다.</p>
+	<p>방문해주셔서 감사하고, 오늘도 즐거운 하루 되시길 바랍니다.🙂</p>
+</div>
+<div class="paragraph">
+	<h4>Recommanded Articles</h4>
+	<ul>
+		<li><a href="/all/algorithm/ps/shortcoding.html">Code Golf</a></li>
+		<li><a href="/all/algorithm/doc/math/FFT.html">FFT</a></li>
+		<li><a href="/all/algorithm/doc/dp/slope trick 1.html">Slope Trick</a></li>
+		<li><a href="/all/algorithm/doc/math/LP.html">Linear Programming</a></li>
+		<li><a href="/all/algorithm/doc/math/generating function.html">Generating Function</a></li>
+	</ul>
+</div>
+<div class="paragraph">
+	<h4>Recent Comments</h4>
+	<ul>
+		{%- for comment in recent_comments -%}
+			<li><a href="{{comment['path']}}">[{{comment['writer']}}]: {{comment['text']}} ({{comment['path']}})</a></li>
+		{%- endfor -%}
+	</ul>
+</div>
+<div class="paragraph">
+	<h4>Contact</h4>
+	<p>📧 tuxedcat@gmail.com</p>
+</div>
+{% endblock %}

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<link rel="stylesheet" type="text/css" href="/static/base.css">
+	<link rel="shortcut icon" href="/static/favicon.ico">
+	<script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
+	<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8308944047699470" crossorigin="anonymous"></script>
+	<meta name="naver-site-verification" content="ce49e4f38689e964985eb1eb666b11b0e12356ba"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>{{article_name}}</title>
+	<script>
+		// document.title = "{{article_name}}"
+		function side_li_icon_click(selfs, identifier) {
+			var x = selfs.parent().children('ul');
+			function getVal() {
+				var value = parseInt(localStorage.getItem(identifier))
+				if (isNaN(value)) value = 1
+				return value
+			}
+			localStorage.setItem(identifier, (getVal() + 1) % 2)
+			if (getVal() % 2 === 0) {
+				let h = 0;
+				x.height(x.children().each(() => h += $(this).height()) + 'px');
+				x.css('opacity', 1);
+				x.css('pointer-events', 'inherit');
+				selfs[0].src="/static/side_li_close.png"
+			} else {
+				x.height(0);
+				x.css('opacity', 0);
+				x.css('pointer-events', 'none');
+				selfs[0].src="/static/side_li_open.png"
+			}
+		}
+		window.onload = () => {
+			//alert(1)
+			//$('img.directory').each((idx,item)=>{alert($(item).prop('nodeName'))})
+			$('img.directory').click()
+			$('img.directory').click()
+		}
+	</script>
+</head>
+
+<body>
+	<img id="side_bar_button" src="/static/side_menu.png" />
+	<nav id="side_bar">
+		<div style="padding:5px 5px 5px 5px;">
+			<div style="display:inline-block; border-radius: 20px; padding:5px 5px 5px 5px; border: 3px; border-style: solid; border-color: black; background-color: white;">
+				<a href="/" style="color:black; text-decoration: none;">Home</a>
+			</div>	
+			<div style="display:inline-block; border-radius: 20px; padding:5px 5px 5px 5px; border: 3px; border-style: solid; border-color: black; background-color: white;">
+				<a href="https://github.com/wolfrev0" style="color:black; text-decoration: none;"><img style="width:32px" src="/static/github-mark.png"/></a>
+			</div>
+			<div style="display:inline-block; border-radius: 20px; padding:5px 5px 5px 5px; border: 3px; border-style: solid; border-color: black; background-color: white;">
+				<a href="https://www.linkedin.com/in/wolfrevo/" style="color:black; text-decoration: none;"><img style="width:32px" src="/static/linkedin.png"/></a>
+			</div>
+			<div style="display:inline-block; border-radius: 20px; padding:5px 5px 5px 5px; border: 3px; border-style: solid; border-color: black; background-color: white;">
+				<a href="mailto:wolfrevo1337@gmail.com" style="color:black; text-decoration: none;"><img style="width:32px" src="/static/email.png"/></a>
+			</div>
+		</div>
+		<a href="/" style="display: flex; justify-content: center;">
+			<img src="/static/pfp.png" style="display:block;  pointer-events:none; width:256px;border-radius: 50%; border: 6px solid lightslategrey;" />
+		</a>
+		<p style="text-align: right; margin-right: 15px;">Today Pageview: {{pageview_count}}</p>
+		<!-- <img src='/static/fox.png' style='position:fixed; bottom:10px; right:190px; display:block; pointer-events:none;' /> -->
+		{%- macro make_menu(node) -%}
+		<li class="side_li">
+			{% if node.children %}
+			<img src="/static/side_li_close.png" class="directory" onclick="side_li_icon_click($(this),'{{node.href}}')" />
+			{% else %}
+			<img src="/static/side_li_doc.png" onclick="window.location='{{node.href}}'" />
+			{% endif %}
+			<a class="side_li_a" href="{{node.href}}">{{node.text}}</a>
+			<ul>
+				{%- for child in node.children -%}
+				{{ make_menu(child) }}
+				{%- endfor -%}
+			</ul>
+		</li>
+		{%- endmacro %}
+
+		<ul>
+			{{ make_menu(category_root) }}
+		</ul>
+	</nav>
+	<article id="content">
+		<div id="content_aligner">
+			<h1 style='padding-bottom: 15px; border-bottom: 2px solid black;'>{{article_name}}</h1>
+			{% block content %}
+			{% endblock %}
+			<!-- <img src="/static/cat2.png" style="bottom:0px;right:0px;position:fixed;pointer-events:none;" /> -->
+
+			{%- macro make_comment(node) -%}
+			<li style="border:1px; border-color: black; border-style:solid; border-radius: 10px; list-style: none;">
+				{% if node==comment_tree %}
+				<h3>Comments</h3>
+				{% else %}
+				<p style="margin: 0; white-space: pre-line;">[{{node.writer}}]: {{node.text}}</p>
+				<details>
+					<summary style="color: lightgray;">reply</summary>
+					<form action="/comment">
+						<input type="hidden" name="path" value="{{node.path}}">
+						<input type="hidden" name="id" value="{{node.id}}">
+						<input type="text" name="writer" placeholder="nickname" style="display: block">
+						<textarea name="text" style="width:90%"></textarea>
+						<!-- <input type="text" name="text" placeholder="message"> -->
+						<input type="submit" value="submit">
+					</form> 
+				</details>
+				{% endif %}
+				
+				<ul style="margin: 0;">
+					{%- for child in node.children -%}
+					{{ make_comment(child) }}
+					{%- endfor -%}
+				</ul>
+				
+				{% if node==comment_tree %}
+				<form action="/comment">
+					<input type="hidden" name="path" value="{{node.path}}">
+					<input type="hidden" name="id" value="{{node.id}}">
+					<input type="text" name="writer" placeholder="nickname" style="display: block">
+					<textarea name="text" style="width:90%"></textarea>
+					<!-- <input type="text" name="text" placeholder="message"> -->
+					<input type="submit" value="submit">
+				</form> 
+				{% endif %}
+			</li>
+			{%- endmacro %}
+
+			{% if comment_tree %}
+			<ul style="margin: 0;">
+				{{ make_comment(comment_tree) }}
+			</ul>
+			{% endif %}
+
+		</div>
+	</article>
+	<div class="left area">
+		<!--  -->
+	</div>
+</body>
+
+</html>
